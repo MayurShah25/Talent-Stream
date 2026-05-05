@@ -23,16 +23,12 @@ import {
   TrendingUp, 
   Zap, 
   FileText, 
-  Plus,
-  Wallet 
+  Plus 
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { CANDIDATES, NAV_ITEMS } from './constants';
-import { WalletProvider, useWallet } from './components/WalletProvider';
 
 function Header() {
-  const { address, isConnected, isConnecting, error, connect, disconnect } = useWallet();
-
   return (
     <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-outline-variant h-16 flex items-center justify-between px-8 transition-standard">
       <div className="flex-1 max-w-xl">
@@ -47,19 +43,6 @@ function Header() {
       </div>
 
       <div className="flex items-center gap-6">
-        <AnimatePresence>
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="bg-error-container text-error text-[10px] px-3 py-1 rounded font-bold border border-error/20"
-            >
-              {error}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <div className="flex items-center gap-4">
           <button className="text-on-surface-variant hover:text-primary transition-standard relative">
             <Bell size={20} />
@@ -73,25 +56,12 @@ function Header() {
         <div className="h-6 w-px bg-outline-variant"></div>
         
         <div className="flex items-center gap-3">
-          {isConnected ? (
-            <button 
-              onClick={disconnect}
-              className="flex items-center gap-2 bg-primary-container/10 text-primary px-3 py-1.5 rounded text-xs font-bold hover:bg-primary-container/20 transition-standard border border-primary/20"
-            >
-              <Wallet size={14} />
-              {address?.slice(0, 6)}...{address?.slice(-4)}
-            </button>
-          ) : (
-            <button 
-              onClick={connect}
-              disabled={isConnecting}
-              className="flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded text-xs font-semibold shadow-sm hover:brightness-110 transition-standard disabled:opacity-50"
-            >
-              <Wallet size={14} />
-              {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-            </button>
-          )}
-          
+          <button className="bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded text-xs font-semibold hover:brightness-95 transition-standard">
+            Filter
+          </button>
+          <button className="bg-primary text-white px-4 py-1.5 rounded text-xs font-semibold shadow-sm hover:brightness-110 transition-standard">
+            Start Analysis
+          </button>
           <div className="relative group cursor-pointer">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOOsVxlkg4FeYbXyvKGJjHwXs0ICI9Inn3uaqIK98PyhrYrcnGVAb5nM67Qcj9SNbTG2-8Re5a8omINUX2fDc5ygBBINyFfQycTGnrUaDmnd5kOZZ0xhvP0_bd7jEZaaO4En_gEcT846dCOmqDuvuoVep2MOYM-zqlH8NAaHNsBgXiqKyKV2zk8OTc9LFsXq-04-Kx_2fhO_jydRp4Q7uiOST1kR-8ypWY5ZUTJBGrMonCjswFZxY_mRhMSQ6eetx_rgzsvFto7Sc" 
@@ -105,9 +75,7 @@ function Header() {
   );
 }
 
-function DashboardContent() {
-  const { isConnected, connect } = useWallet();
-
+export default function App() {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
@@ -231,14 +199,7 @@ function DashboardContent() {
                         />
                         <div>
                           <p className="text-sm font-bold text-on-surface group-hover:text-primary transition-standard">{candidate.name}</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-xs text-secondary">{candidate.email}</p>
-                            {isConnected && (
-                              <span className="flex items-center gap-0.5 text-[8px] bg-primary/5 text-primary px-1 rounded-full font-bold border border-primary/10">
-                                <Zap size={8} /> On-chain Verified
-                              </span>
-                            )}
-                          </div>
+                          <p className="text-xs text-secondary">{candidate.email}</p>
                         </div>
                       </div>
                     </td>
@@ -348,10 +309,9 @@ function DashboardContent() {
                 </p>
               </div>
               <button 
-                onClick={isConnected ? () => console.log('Bulk analysis...') : connect}
                 className="mt-6 bg-white py-3 px-6 rounded-lg text-primary font-bold text-sm hover:bg-surface transition-standard self-start shadow-md"
               >
-                {isConnected ? 'Bulk Analyze' : 'Connect to Analyze'}
+                Bulk Analyze
               </button>
               <div className="absolute top-0 right-0 p-4 opacity-20">
                 <Settings size={60} className="animate-spin-slow" />
@@ -373,10 +333,3 @@ function DashboardContent() {
   );
 }
 
-export default function App() {
-  return (
-    <WalletProvider>
-      <DashboardContent />
-    </WalletProvider>
-  );
-}
